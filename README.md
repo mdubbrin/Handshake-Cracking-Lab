@@ -1,6 +1,6 @@
 # Handshake-Cracking-Lab
 
-> ⚠️ **Legal notice:** Use this lab only on networks and hardware you own or have explicit written permission to test.
+> Use this lab only on networks and hardware you own or have explicit written permission to test.
 
 ## Purpose
 This repository is a hands-on lab for learning WPA/WPA2 handshake capture and offline password cracking in a controlled environment.
