@@ -5,15 +5,65 @@
 ## Purpose
 This repository is a hands-on lab for learning WPA/WPA2 handshake capture and offline password cracking in a controlled environment.
 
-The planned structure is:
-- **ESP32 C++ code** to host a lab access point (to be added later)
+The structure includes:
+- **ESP32 C++ code** to host a lab access point
 - **Operator instructions** for deauth, handshake capture, and password cracking
 
 ## Current Scope
-The ESP32 C++ implementation is intentionally deferred for now. This README focuses on the repeatable lab workflow.
+This README now includes a basic ESP32 AP sketch (`main.cpp`) and the repeatable lab workflow.
+
+## Flashing the ESP32 with PlatformIO
+
+### 1) Install PlatformIO Core
+Install PlatformIO on your workstation:
+
+```bash
+python3 -m pip install --user platformio
+```
+
+Confirm installation:
+
+```bash
+pio --version
+```
+
+### 2) Initialize a PlatformIO ESP32 project in this repo
+From the repository root:
+
+```bash
+pio project init --board esp32dev
+mkdir -p src
+cp main.cpp src/main.cpp
+```
+
+### 3) Connect your ESP32 and find its serial port
+List detected serial devices:
+
+```bash
+pio device list
+```
+
+Note the port name (for example, `/dev/ttyUSB0` on Linux or `COM3` on Windows).
+
+### 4) Build and upload firmware
+Run upload from the repository root:
+
+```bash
+pio run -t upload --upload-port <PORT>
+```
+
+Replace `<PORT>` with your board's serial port.
+
+### 5) Open serial monitor (optional)
+
+```bash
+pio device monitor -b 115200 --port <PORT>
+```
+
+You should see startup logs including SSID and AP IP address.
 
 ## Lab Topology
-- **Target AP:** ESP32-hosted AP (future code in this repo)
+- **Target AP:** ESP32-hosted AP
 - **Client device:** Any device that can connect to the AP
 - **Attacker workstation:** Linux machine with monitor-mode wireless adapter
 
@@ -24,8 +74,8 @@ The ESP32 C++ implementation is intentionally deferred for now. This README focu
 
 ## Lab Workflow
 
-### 1) Start the AP (future repo code)
-When the ESP32 code is added, start a WPA2 AP with:
+### 1) Start the AP
+Flash the ESP32 code above, then start a WPA2 AP with:
 - Known SSID (for example: `LabAP`)
 - Known passphrase (for example: `LabPass123!`)
 
@@ -86,6 +136,6 @@ If the passphrase exists in the wordlist, `aircrack-ng` should recover it.
 - Crack fails: use better wordlists/rules or verify AP passphrase.
 
 ## Next Steps
-- Add ESP32 C++ AP-hosting code under a dedicated source directory
+- Move the ESP32 source and PlatformIO config into a dedicated source layout
 - Add reproducible scripts for lab setup and capture parsing
 - Add lab validation notes/screenshots for repeatability
