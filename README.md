@@ -12,6 +12,32 @@ The structure includes:
 ## Current Scope
 This README now includes a basic ESP32 AP sketch (`main.cpp`) and the repeatable lab workflow.
 
+## Quick Setup (macOS, Windows, Linux)
+
+Run the setup script from the repository root:
+
+```bash
+python3 setup_lab.py
+```
+
+On Windows (PowerShell), if `python3` is not available:
+
+```powershell
+python setup_lab.py
+```
+
+What it does:
+- Installs/updates PlatformIO Core using pip
+- Initializes a PlatformIO ESP32 project (`esp32dev`) if needed
+- Copies `main.cpp` into `src/main.cpp` (without overwriting by default)
+- Prints `aircrack-ng` installation commands for your OS
+
+Optional overwrite of `src/main.cpp`:
+
+```bash
+python3 setup_lab.py --force-copy
+```
+
 ## Flashing the ESP32 with PlatformIO
 
 ### 1) Install PlatformIO Core
