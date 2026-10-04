@@ -10,7 +10,7 @@ The structure includes:
 - **Operator instructions** for deauth, handshake capture, and password cracking
 
 ## Current Scope
-This README now includes a basic ESP32 AP sketch (`main.cpp`) and the repeatable lab workflow.
+This README now includes a basic ESP32 AP sketch (`src/main.cpp`) and the repeatable lab workflow.
 
 ## Quick Setup (macOS, Windows, Linux)
 
@@ -28,15 +28,8 @@ python setup_lab.py
 
 What it does:
 - Installs/updates PlatformIO Core using pip
-- Initializes a PlatformIO ESP32 project (`esp32dev`) if needed
-- Copies `main.cpp` into `src/main.cpp` (without overwriting by default)
+- Verifies required PlatformIO project files are present (`platformio.ini`, `src`, `include`, `lib`)
 - Prints `aircrack-ng` installation commands for your OS
-
-Optional overwrite of `src/main.cpp`:
-
-```bash
-python3 setup_lab.py --force-copy
-```
 
 ## Flashing the ESP32 with PlatformIO
 
@@ -53,13 +46,11 @@ Confirm installation:
 pio --version
 ```
 
-### 2) Initialize a PlatformIO ESP32 project in this repo
+### 2) Project structure is already included in this repo
 From the repository root:
 
 ```bash
-pio project init --board esp32dev
-mkdir -p src
-cp main.cpp src/main.cpp
+ls platformio.ini src/main.cpp include lib
 ```
 
 ### 3) Connect your ESP32 and find its serial port
@@ -162,6 +153,5 @@ If the passphrase exists in the wordlist, `aircrack-ng` should recover it.
 - Crack fails: use better wordlists/rules or verify AP passphrase.
 
 ## Next Steps
-- Move the ESP32 source and PlatformIO config into a dedicated source layout
 - Add reproducible scripts for lab setup and capture parsing
 - Add lab validation notes/screenshots for repeatability
