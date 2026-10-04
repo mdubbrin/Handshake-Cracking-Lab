@@ -5,17 +5,17 @@ from __future__ import annotations
 
 import argparse
 import platform
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent
-MAIN_CPP = REPO_ROOT / "main.cpp"
 SRC_DIR = REPO_ROOT / "src"
 SRC_MAIN_CPP = SRC_DIR / "main.cpp"
 PLATFORMIO_INI = REPO_ROOT / "platformio.ini"
+INCLUDE_DIR = REPO_ROOT / "include"
+LIB_DIR = REPO_ROOT / "lib"
 
 
 def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
@@ -28,26 +28,20 @@ def install_platformio() -> None:
     run([sys.executable, "-m", "pip", "install", "--user", "platformio"])
 
 
-def initialize_project() -> None:
-    if not PLATFORMIO_INI.exists():
-        print("Initializing PlatformIO project...")
-        run([sys.executable, "-m", "platformio", "project", "init", "--board", "esp32dev"])
-    else:
-        print("platformio.ini already exists; skipping project initialization.")
+def verify_project_layout() -> None:
+    missing_paths: list[Path] = []
+    for path in (PLATFORMIO_INI, SRC_DIR, SRC_MAIN_CPP, INCLUDE_DIR, LIB_DIR):
+        if not path.exists():
+            missing_paths.append(path)
 
+    if missing_paths:
+        missing = "\n".join(f"- {path.relative_to(REPO_ROOT)}" for path in missing_paths)
+        raise FileNotFoundError(
+            "Expected PlatformIO project files are missing. Restore these paths:\n"
+            f"{missing}"
+        )
 
-def copy_source(force: bool) -> None:
-    if not MAIN_CPP.exists():
-        raise FileNotFoundError(f"Expected {MAIN_CPP} to exist.")
-
-    SRC_DIR.mkdir(parents=True, exist_ok=True)
-
-    if SRC_MAIN_CPP.exists() and not force:
-        print("src/main.cpp already exists; skipping copy (use --force-copy to overwrite).")
-        return
-
-    shutil.copy2(MAIN_CPP, SRC_MAIN_CPP)
-    print(f"Copied {MAIN_CPP.name} -> {SRC_MAIN_CPP}")
+    print("PlatformIO project files are present in the repository.")
 
 
 def print_aircrack_instructions() -> None:
@@ -69,17 +63,11 @@ def print_aircrack_instructions() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Install dependencies and set up this lab.")
-    parser.add_argument(
-        "--force-copy",
-        action="store_true",
-        help="Overwrite src/main.cpp if it already exists.",
-    )
-    args = parser.parse_args()
+    parser.parse_args()
 
     try:
         install_platformio()
-        initialize_project()
-        copy_source(force=args.force_copy)
+        verify_project_layout()
         print_aircrack_instructions()
     except subprocess.CalledProcessError as exc:
         print(f"\nCommand failed with exit code {exc.returncode}.")
