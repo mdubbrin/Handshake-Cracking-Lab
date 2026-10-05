@@ -4,9 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import bz2
 import platform
+import shutil
 import subprocess
 import sys
+import urllib.request
 from pathlib import Path
 
 
@@ -16,6 +19,7 @@ SRC_MAIN_CPP = SRC_DIR / "main.cpp"
 PLATFORMIO_INI = REPO_ROOT / "platformio.ini"
 INCLUDE_DIR = REPO_ROOT / "include"
 LIB_DIR = REPO_ROOT / "lib"
+ROCKYOU_URL = "https://downloads.skullsecurity.org/passwords/rockyou.txt.bz2"
 
 
 def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
@@ -61,14 +65,49 @@ def print_aircrack_instructions() -> None:
         print("- Check your package manager or build from source: https://www.aircrack-ng.org/")
 
 
+def download_rockyou_wordlist(destination_dir: Path) -> Path:
+    destination_dir.mkdir(parents=True, exist_ok=True)
+    extracted_path = destination_dir / "rockyou.txt"
+    compressed_path = destination_dir / "rockyou.txt.bz2"
+
+    if extracted_path.exists():
+        print(f"\nRockYou wordlist already exists at: {extracted_path}")
+        return extracted_path
+
+    print(f"\nDownloading official RockYou wordlist to: {compressed_path}")
+    with urllib.request.urlopen(ROCKYOU_URL) as response, compressed_path.open("wb") as output_file:
+        shutil.copyfileobj(response, output_file)
+
+    print(f"Extracting wordlist to: {extracted_path}")
+    with bz2.open(compressed_path, "rb") as compressed_file, extracted_path.open("wb") as output_file:
+        shutil.copyfileobj(compressed_file, output_file)
+
+    compressed_path.unlink(missing_ok=True)
+    return extracted_path
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Install dependencies and set up this lab.")
-    parser.parse_args()
+    parser.add_argument(
+        "--download-rockyou",
+        action="store_true",
+        help="Download and extract the official rockyou wordlist.",
+    )
+    parser.add_argument(
+        "--wordlist-dir",
+        type=Path,
+        default=REPO_ROOT / "wordlists",
+        help="Directory used for downloaded wordlists (default: ./wordlists).",
+    )
+    args = parser.parse_args()
 
     try:
         install_platformio()
         verify_project_layout()
         print_aircrack_instructions()
+        if args.download_rockyou:
+            output_path = download_rockyou_wordlist(args.wordlist_dir)
+            print(f"RockYou wordlist ready: {output_path}")
     except subprocess.CalledProcessError as exc:
         print(f"\nCommand failed with exit code {exc.returncode}.")
         return exc.returncode

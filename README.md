@@ -31,6 +31,12 @@ What it does:
 - Verifies required PlatformIO project files are present (`platformio.ini`, `src`, `include`, `lib`)
 - Prints `aircrack-ng` installation commands for your OS
 
+Optional: download and extract the official RockYou wordlist into `wordlists/`:
+
+```bash
+python3 setup_lab.py --download-rockyou
+```
+
 ## Flashing the ESP32 with PlatformIO
 
 ### 1) Install PlatformIO Core
