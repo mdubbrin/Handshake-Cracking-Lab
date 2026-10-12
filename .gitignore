@@ -1,0 +1,23 @@
+# Captures — these contain real handshakes for real networks. Don't commit them.
+*.cap
+*.pcap
+*.pcapng
+*.csv
+*.netxml
+*.kismet.*
+!samples/*.cap
+
+# Cracking artifacts
+*.hc22000
+*.hccapx
+*.potfile
+hashcat.potfile
+*.restore
+*.log
+
+# Wordlists (large)
+wordlist.txt
+rockyou.txt
+wpa-candidates.txt
+*.txt.gz
+!**/README*.txt
