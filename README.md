@@ -6,23 +6,16 @@ deauth attack, and crack the password offline.
 **The target is a hotspot you create on your own phone.** You own it, you set
 its password, you turn it off when you're done.
 
-You type every command yourself — there are no scripts to run. That's the
-point.
-
 ---
 
 ## Before you start
 
-**Only attack your own phone's hotspot.** Not your dorm's AP, not a
-neighbour's, not a coffee shop.
+**Only attack your own hotspot/network.**
 
 Deauth frames are real transmissions that knock real devices offline. In the
-US, deauthing networks you don't control breaks Communications Act § 333 —
-the FCC has fined hotels six figures for exactly this. Doing it to your own
+US, deauthing networks you don't control is **illegal**. Doing it to your own
 hotspot is fine. The lab always targets one specific device so you don't hit
 anyone else.
-
-If you accidentally capture someone else's handshake, delete it.
 
 ---
 
@@ -30,9 +23,9 @@ If you accidentally capture someone else's handshake, delete it.
 
 - **A Linux machine.** Kali/Parrot have the tools preinstalled. Any distro
   works. A VM only works with a USB adapter passed through.
-- **A Wi-Fi adapter with monitor mode.** Injection too, ideally — but Step 5
+- **A Wi-Fi adapter with monitor mode.** Injection too, ideally, but Step 5
   has a path that works without it.
-- **A phone** — this is the target AP.
+- **A phone**: this is the target AP. Any device that hosts a network that **you own** (eg home network, ESP32) will also work. You can find the ESP32 code in the repo.
 - **A second device** to connect to the hotspot. A hotspot with nothing
   connected to it never produces a handshake.
 
@@ -53,11 +46,7 @@ Check your adapter supports monitor mode:
 iw phy | grep -A10 "Supported interface modes"   # look for "* monitor"
 ```
 
-Built-in **Intel** cards do monitor mode but usually not injection — fine,
-use Path B in Step 5. Most built-in Broadcom/Realtek cards do neither; you'll
-want a cheap USB adapter (anything `ath9k_htc`, e.g. Alfa AWUS036NHA).
-
-No wordlist ships with this repo — Step 7 covers downloading one.
+Some built-in cards do monitor mode but not packet injection, so use Path B in step 5 if needed. Most built-in Broadcom/Realtek cards do neither; you'll want a cheap USB adapter (anything `ath9k_htc`, e.g. Alfa AWUS036NHA).
 
 ---
 
